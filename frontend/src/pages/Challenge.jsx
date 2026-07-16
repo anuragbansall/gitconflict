@@ -15,12 +15,17 @@ import useStartChallenge from "../hooks/useStartChallenge";
 import Button from "../components/Button";
 import useStopChallenge from "../hooks/useStopChallenge";
 import Error from "../components/Error";
+import useVerifyChallenge from "../hooks/useverifyChallenge";
+import ChallengePopup from "../components/ChallengePopup";
+import { CiLock } from "react-icons/ci";
 
 function Challenge() {
   const { id } = useParams();
 
   const sessionIdRef = useRef(null);
   const stopRequestedRef = useRef(false);
+
+  const [showPopup, setShowPopup] = useState(false);
 
   const {
     data: challenge = {},
@@ -30,11 +35,21 @@ function Challenge() {
   } = useChallengeById(id);
   const startChallengeMutation = useStartChallenge();
   const stopChallengeMutation = useStopChallenge();
+  const verifyChallengeMutation = useVerifyChallenge();
 
-  const difficultyStyles = {
-    Easy: "bg-green-100 text-green-700 border-green-200",
-    Medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    Hard: "bg-red-100 text-red-700 border-red-200",
+  const handleVerifyChallenge = () => {
+    const sessionId = sessionIdRef.current;
+    if (!sessionId) {
+      console.error("No sessionId available for verification.");
+      return;
+    }
+
+    verifyChallengeMutation.mutate(sessionId, {
+      onSuccess: (data) => {
+        console.log("Challenge verified successfully:", data);
+        setShowPopup(true);
+      },
+    });
   };
 
   // Keep the latest sessionId
@@ -102,6 +117,12 @@ function Challenge() {
     };
   }, []);
 
+  const difficultyStyles = {
+    Easy: "bg-green-100 text-green-700 border-green-200",
+    Medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    Hard: "bg-red-100 text-red-700 border-red-200",
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -111,25 +132,14 @@ function Challenge() {
   }
 
   return (
-    <main
-      className="
-        grid
-        min-h-screen
-        w-full
-        gap-4
-        overflow-hidden
-        bg-zinc-100
-        p-3
-        sm:p-4
-
-        grid-cols-1
-        grid-rows-none
-
-        lg:h-screen
-        lg:grid-cols-2
-        lg:grid-rows-[3fr_1fr]
-      "
-    >
+    <main className="relative grid min-h-screen w-full gap-4 overflow-hidden bg-zinc-100 p-3 sm:p grid-cols-1 grid-rows lg:h-screen lg:grid-cols-2 lg:grid-rows-2">
+      {showPopup && (
+        <ChallengePopup
+          success={verifyChallengeMutation?.data?.success}
+          errors={verifyChallengeMutation?.data?.errors || []}
+          onClose={() => setShowPopup(false)}
+        />
+      )}
       {/* ================= LEFT PANEL ================= */}
       <section
         id="challenge-info"
@@ -301,22 +311,26 @@ function Challenge() {
       ) : (
         <section
           id="challenge-editor"
-          className="
-          min-h-75
-          rounded-xl
-          border
-          border-zinc-300
-          bg-white
-          p-5
-          shadow
-
-          lg:min-h-0
-        "
+          className=" min-h-75 rounded-xl border border-zinc-300 bg-white p-5 lg:min-h-0 flex flex-col"
         >
           <div className="w-full flex">
-            <Button className="ml-auto">
+            <Button
+              className="ml-auto"
+              onClick={handleVerifyChallenge}
+              disabled={verifyChallengeMutation.isPending}
+            >
               <FaPlay /> Submit Solution
             </Button>
+          </div>
+
+          <div className="mt-5 h-full w-full bg-zinc-100 flex justify-center items-center flex-col gap-3 rounded-lg border border-zinc-300">
+            <div className="text-zinc-400 text-5xl font-bold">
+              <CiLock />
+            </div>
+            <h2 className="text-zinc-500 text-lg font-semibold">
+              This feature is under development. The code editor will be
+              available soon.
+            </h2>
           </div>
         </section>
       )}
@@ -337,7 +351,7 @@ function Challenge() {
           lg:min-h-0
         "
         >
-          <CodeEditor />
+          <CodeEditor sessionId={startChallengeMutation.data?.sessionId} />
         </section>
       )}
     </main>

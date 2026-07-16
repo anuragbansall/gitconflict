@@ -3,10 +3,13 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 
 import "@xterm/xterm/css/xterm.css";
+import useExecuteCommand from "../hooks/useExecuteCommand";
 
-function CodeEditor() {
+function CodeEditor({ sessionId }) {
   const containerRef = useRef(null);
   const terminalRef = useRef(null);
+
+  const executeCommandMutation = useExecuteCommand();
 
   useEffect(() => {
     const terminal = new Terminal({
@@ -55,11 +58,27 @@ function CodeEditor() {
         terminal.writeln("");
 
         // TODO: Get actual command execution result from the backend and display it in the terminal.
-        terminal.writeln(`Command executed: ${command || "empty command"}`);
+        executeCommandMutation.mutate(
+          {
+            sessionId,
+            command: command || "empty command",
+          },
+          {
+            onSuccess: (data) => {
+              terminal.writeln(data.output || "Command executed successfully!");
+              prompt();
+            },
+            onError: (error) => {
+              terminal.writeln(
+                `Error executing command: ${error.message || "Unknown error"}`,
+              );
+              prompt();
+            },
+          },
+        );
 
         command = "";
 
-        prompt();
         return;
       }
 

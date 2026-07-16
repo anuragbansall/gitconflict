@@ -20,7 +20,8 @@ export const stopChallenge = async (sessionId) => {
   return response.data;
 };
 
-export const executeCommand = async (sessionId, command) => {
+export const executeCommand = async ({ sessionId, command }) => {
+  console.log("Executing command:", command, "for sessionId:", sessionId);
   const response = await api.post(`/challenges/execute/${sessionId}`, {
     command,
   });
