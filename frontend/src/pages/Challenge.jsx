@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   FiClock,
   FiTag,
@@ -6,26 +6,109 @@ import {
   FiCheckCircle,
   FiAward,
 } from "react-icons/fi";
-import { FaStar } from "react-icons/fa";
+import { FaPlay, FaStar } from "react-icons/fa";
 import CodeEditor from "../components/CodeEditor";
+import { useParams } from "react-router";
+import useChallengeById from "../hooks/useChallengeById";
+import Loading from "../components/Loading";
+import useStartChallenge from "../hooks/useStartChallenge";
+import Button from "../components/Button";
+import useStopChallenge from "../hooks/useStopChallenge";
+import Error from "../components/Error";
 
 function Challenge() {
-  const [challenge] = useState({
-    id: "leaked-secrets",
-    title: "Leaked Secrets",
-    description:
-      "In this challenge, you will learn how to identify and mitigate leaked secrets in a Git repository. You will be provided with a sample repository that contains sensitive information, and your task is to find and remove these secrets.",
-    difficulty: "Easy",
-    xp: 100,
-    estimatedTime: 5,
-    tags: ["git", "security"],
-  });
+  const { id } = useParams();
+
+  const sessionIdRef = useRef(null);
+  const stopRequestedRef = useRef(false);
+
+  const {
+    data: challenge = {},
+    isLoading,
+    isError,
+    error,
+  } = useChallengeById(id);
+  const startChallengeMutation = useStartChallenge();
+  const stopChallengeMutation = useStopChallenge();
 
   const difficultyStyles = {
     Easy: "bg-green-100 text-green-700 border-green-200",
     Medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
     Hard: "bg-red-100 text-red-700 border-red-200",
   };
+
+  // Keep the latest sessionId
+  useEffect(() => {
+    if (startChallengeMutation.data?.sessionId) {
+      sessionIdRef.current = startChallengeMutation.data.sessionId;
+      stopRequestedRef.current = false;
+    }
+  }, [startChallengeMutation.data]);
+
+  const requestStopSession = (sessionId) => {
+    if (!sessionId || stopRequestedRef.current) return;
+
+    stopRequestedRef.current = true;
+    stopChallengeMutation.mutate(sessionId);
+  };
+
+  const sendStopRequestOnExit = () => {
+    const sessionId = sessionIdRef.current;
+
+    if (!sessionId || stopRequestedRef.current) return;
+
+    stopRequestedRef.current = true;
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    if (backendUrl) {
+      fetch(`${backendUrl}/challenges/stop/${sessionId}`, {
+        method: "DELETE",
+        credentials: "include",
+        keepalive: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).catch(() => {});
+    }
+  };
+
+  // Start the challenge when the component mounts and the challenge data is available
+  useEffect(() => {
+    if (challenge?.id) {
+      startChallengeMutation.mutate(challenge.id);
+    }
+  }, [challenge?.id]);
+
+  // Stop the challenge when the component unmounts
+  useEffect(() => {
+    return () => {
+      requestStopSession(sessionIdRef.current);
+    };
+  }, []);
+
+  // Handle page unload to stop the challenge
+  useEffect(() => {
+    const handleExit = () => {
+      sendStopRequestOnExit();
+    };
+
+    window.addEventListener("pagehide", handleExit);
+    window.addEventListener("beforeunload", handleExit);
+
+    return () => {
+      window.removeEventListener("pagehide", handleExit);
+      window.removeEventListener("beforeunload", handleExit);
+    };
+  }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    return <Error error={error} />;
+  }
 
   return (
     <main
@@ -213,9 +296,12 @@ function Challenge() {
       </section>
 
       {/* ================= EDITOR ================= */}
-      <section
-        id="challenge-editor"
-        className="
+      {startChallengeMutation.isPending ? (
+        <Loading message="Setting up editor..." />
+      ) : (
+        <section
+          id="challenge-editor"
+          className="
           min-h-75
           rounded-xl
           border
@@ -226,14 +312,22 @@ function Challenge() {
 
           lg:min-h-0
         "
-      >
-        <h2 className="text-xl font-semibold">Editor</h2>
-      </section>
+        >
+          <div className="w-full flex">
+            <Button className="ml-auto">
+              <FaPlay /> Submit Solution
+            </Button>
+          </div>
+        </section>
+      )}
 
       {/* ================= TERMINAL ================= */}
-      <section
-        id="terminal"
-        className="
+      {startChallengeMutation.isPending ? (
+        <Loading message="Setting up terminal..." />
+      ) : (
+        <section
+          id="terminal"
+          className="
           overflow-hidden
           rounded-xl
           border
@@ -242,9 +336,10 @@ function Challenge() {
 
           lg:min-h-0
         "
-      >
-        <CodeEditor />
-      </section>
+        >
+          <CodeEditor />
+        </section>
+      )}
     </main>
   );
 }

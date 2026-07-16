@@ -5,10 +5,25 @@ import Challenges from "./pages/Challenges";
 import PageLayout from "./components/PageLayout";
 import BlankPageLayout from "./components/BlankPageLayout";
 import Challenge from "./pages/Challenge";
+import { Bounce, ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
+
       <Routes>
         <Route element={<PageLayout />}>
           <Route path="/" element={<Home />} />

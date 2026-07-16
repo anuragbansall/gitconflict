@@ -19,7 +19,7 @@ export const copyFileToContainer = async (
   localFilePath,
   containerFilePath = "/workspace",
 ) => {
-  const command = `docker cp ${localFilePath} ${containerName}:${containerFilePath}`;
+  const command = `docker cp "${localFilePath}" "${containerName}:${containerFilePath}"`;
 
   try {
     await runCommand(command);
