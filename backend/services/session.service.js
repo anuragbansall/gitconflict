@@ -9,6 +9,12 @@ export const getSession = (sessionId) => {
   return sessions[sessionId];
 };
 
+export const getSessionByChallengeId = (challengeId) => {
+  return Object.values(sessions).find(
+    (session) => session.challengeId === challengeId,
+  );
+};
+
 export const removeSession = (sessionId) => {
   delete sessions[sessionId];
 };

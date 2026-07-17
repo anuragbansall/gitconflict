@@ -1,16 +1,19 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { executeCommand } from "../api/challenges";
 import { errorToast, successToast } from "../utils/toast";
 
 const useExecuteCommand = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: executeCommand,
-    onSuccess: (data) => {
-      console.log("Command executed successfully:", data);
-      successToast("Command executed successfully!");
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["challenge", variables.challengeId],
+      });
     },
     onError: (error) => {
-      console.error("Error executing command:", error);
+      console.error(error);
       errorToast("Error executing command. Please try again.");
     },
   });

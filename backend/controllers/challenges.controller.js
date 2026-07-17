@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import {
   addSession,
   getSession,
+  getSessionByChallengeId,
   removeSession,
 } from "../services/session.service.js";
 import {
@@ -13,6 +14,7 @@ import {
   executeCommandInContainer,
   removeContainer,
 } from "../services/docker.service.js";
+import { readRepoFiles } from "../utils/readRepoFiles.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url)).slice(0, -1);
 const challengesDir = join(__dirname, "../challenges");
@@ -43,11 +45,23 @@ export const getChallengeById = async (req, res) => {
   try {
     const { challengeId } = req.params;
     const metadataPath = join(challengesDir, challengeId, "metadata.json");
+    const repoPath = join(challengesDir, challengeId, "repo");
+    const session = getSessionByChallengeId(challengeId);
 
     const metadata = await readFile(metadataPath, "utf-8");
     const challenge = JSON.parse(metadata);
 
-    res.status(200).json(challenge);
+    const repo = session
+      ? await readRepoFiles({
+          containerName: session.containerName,
+          containerRepoPath: "/workspace/repo",
+        })
+      : await readRepoFiles(repoPath);
+
+    res.status(200).json({
+      challenge,
+      repo,
+    });
   } catch (error) {
     console.error("Error fetching challenge:", error);
     res.status(404).json({ error: "Challenge not found" });

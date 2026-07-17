@@ -7,7 +7,7 @@ import {
   FiAward,
 } from "react-icons/fi";
 import { FaPlay, FaStar } from "react-icons/fa";
-import CodeEditor from "../components/CodeEditor";
+import CodeTerminal from "../components/CodeTerminal";
 import { useParams } from "react-router";
 import useChallengeById from "../hooks/useChallengeById";
 import Loading from "../components/Loading";
@@ -18,6 +18,7 @@ import Error from "../components/Error";
 import useVerifyChallenge from "../hooks/useverifyChallenge";
 import ChallengePopup from "../components/ChallengePopup";
 import { CiLock } from "react-icons/ci";
+import CodeEditor from "../components/CodeEditor";
 
 function Challenge() {
   const { id } = useParams();
@@ -90,10 +91,10 @@ function Challenge() {
 
   // Start the challenge when the component mounts and the challenge data is available
   useEffect(() => {
-    if (challenge?.id) {
-      startChallengeMutation.mutate(challenge.id);
+    if (challenge?.challenge?.id) {
+      startChallengeMutation.mutate(challenge.challenge.id);
     }
-  }, [challenge?.id]);
+  }, [challenge?.challenge?.id]);
 
   // Stop the challenge when the component unmounts
   useEffect(() => {
@@ -161,11 +162,11 @@ function Challenge() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
-                {challenge.title}
+                {challenge?.challenge?.title}
               </h1>
 
               <p className="mt-4 text-sm leading-7 text-zinc-600 sm:text-base">
-                {challenge.description}
+                {challenge?.challenge?.description}
               </p>
             </div>
 
@@ -178,10 +179,10 @@ function Challenge() {
                 py-2
                 text-sm
                 font-semibold
-                ${difficultyStyles[challenge.difficulty]}
+                ${difficultyStyles[challenge?.challenge?.difficulty]}
               `}
             >
-              {challenge.difficulty}
+              {challenge?.challenge?.difficulty}
             </span>
           </div>
         </div>
@@ -195,7 +196,7 @@ function Challenge() {
             </div>
 
             <p className="mt-3 text-3xl font-bold text-zinc-900">
-              {challenge.xp}
+              {challenge?.challenge?.xp}
             </p>
           </div>
 
@@ -206,7 +207,7 @@ function Challenge() {
             </div>
 
             <p className="mt-3 text-3xl font-bold text-zinc-900">
-              {challenge.estimatedTime} min
+              {challenge?.challenge?.estimatedTime} min
             </p>
           </div>
         </div>
@@ -219,7 +220,7 @@ function Challenge() {
           </h2>
 
           <div className="flex flex-wrap gap-3">
-            {challenge.tags.map((tag) => (
+            {challenge?.challenge?.tags.map((tag) => (
               <span
                 key={tag}
                 className="
@@ -316,7 +317,7 @@ function Challenge() {
           id="challenge-editor"
           className=" min-h-75 rounded-xl border border-zinc-300 bg-white p-5 lg:min-h-0 flex flex-col"
         >
-          <div className="w-full flex">
+          <div className="w-full flex border-b border-zinc-200 pb-3 mb-3">
             <Button
               className="ml-auto"
               onClick={handleVerifyChallenge}
@@ -326,15 +327,7 @@ function Challenge() {
             </Button>
           </div>
 
-          <div className="mt-5 h-full w-full bg-zinc-100 flex justify-center items-center flex-col gap-3 rounded-lg border border-zinc-300">
-            <div className="text-zinc-400 text-5xl font-bold">
-              <CiLock />
-            </div>
-            <h2 className="text-zinc-500 text-lg font-semibold">
-              This feature is under development. The code editor will be
-              available soon.
-            </h2>
-          </div>
+          <CodeEditor repo={challenge?.repo} />
         </section>
       )}
 
@@ -356,7 +349,10 @@ function Challenge() {
           lg:min-h-0
         "
         >
-          <CodeEditor sessionId={startChallengeMutation.data?.sessionId} />
+          <CodeTerminal
+            sessionId={startChallengeMutation.data?.sessionId}
+            challengeId={challenge?.challenge?.id}
+          />
         </section>
       )}
     </main>
