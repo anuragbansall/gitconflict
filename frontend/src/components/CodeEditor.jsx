@@ -118,7 +118,7 @@ function TreeNode({
           text-sm
           cursor-pointer
           transition-colors
-          ${isSelected ? "bg-sky-100 text-sky-900" : "text-zinc-700 hover:bg-zinc-100"}
+          ${isSelected ? "bg-sky-100/20 text-white" : "text-white hover:bg-sky-100/10"}
         `}
         style={{ paddingLeft: `${depth * 14 + 8}px` }}
         onClick={() => {
@@ -252,19 +252,19 @@ function CodeEditor({ repo = [] }) {
   return (
     <div
       ref={editorShellRef}
-      className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row"
+      className="flex min-h-0 flex-1 flex-col lg:flex-row"
       style={{
         ["--left-pane-width"]: `${leftPaneWidth}%`,
       }}
     >
-      <aside className="min-h-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 w-full lg:flex-none lg:w-[var(--left-pane-width)] lg:min-w-[220px] lg:max-w-[50%]">
-        <div className="border-b border-zinc-200 px-4 py-3 text-sm font-semibold text-zinc-700">
+      <aside className="min-h-0 overflow-hidden rounded-xl border border-zinc-200 bg-slate-900 w-full lg:flex-none lg:w-(--left-pane-width) lg:min-w-55 lg:max-w-[50%] text-white">
+        <div className="border-b border-zinc-200 px-4 py-3 text-sm font-semibold text-white">
           Repository Files
         </div>
 
         <div className="max-h-[55vh] overflow-auto p-2 lg:h-full lg:max-h-none">
           {tree.length === 0 ? (
-            <div className="px-3 py-6 text-sm text-zinc-500">
+            <div className="px-3 py-6 text-sm text-white">
               No files available.
             </div>
           ) : (
@@ -289,7 +289,7 @@ function CodeEditor({ repo = [] }) {
         className="hidden lg:block w-2 cursor-col-resize rounded-full bg-zinc-200 transition-colors hover:bg-zinc-300"
       />
 
-      <section className="min-h-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-950 w-full lg:min-w-0 lg:flex-1 lg:max-w-[75%]">
+      <section className="min-h-0 overflow-hidden rounded-xl border border-zinc-200 bg-slate-900 w-full lg:min-w-0 lg:flex-1 lg:max-w-[75%]">
         <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3 text-sm text-zinc-300">
           <span className="min-w-0 truncate font-semibold text-zinc-100">
             {selectedFile?.path || "Select a file"}
