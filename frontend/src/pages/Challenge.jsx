@@ -6,9 +6,9 @@ import {
   FiCheckCircle,
   FiAward,
 } from "react-icons/fi";
-import { FaPlay, FaStar } from "react-icons/fa";
+import { FaArrowLeft, FaPlay, FaStar } from "react-icons/fa";
 import CodeTerminal from "../components/CodeTerminal";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import useChallengeById from "../hooks/useChallengeById";
 import Loading from "../components/Loading";
 import useStartChallenge from "../hooks/useStartChallenge";
@@ -159,6 +159,14 @@ function Challenge() {
       >
         {/* Header */}
         <div className="border-b border-zinc-200 p-5 sm:p-8">
+          <Link
+            to="/challenges"
+            className="flex items-center gap-2 text-md font-medium text-zinc-500 hover:text-blue-500 mb-4 group"
+          >
+            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+            Go back to challenges
+          </Link>
+
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
