@@ -293,9 +293,11 @@ function Challenge() {
               </h3>
 
               <p className="mt-1 text-sm text-indigo-700">
-                Complete this challenge to earn{" "}
-                <span className="font-bold">{challenge.xp} XP</span> and improve
-                your Git security skills.
+                Complete this challenge to earn {}
+                <span className="font-bold">
+                  {challenge?.challenge?.xp} XP
+                </span>{" "}
+                and improve your Git security skills.
               </p>
             </div>
           </div>
