@@ -9,6 +9,7 @@ import {
   FiTarget,
 } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
+import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
 
 function Home() {
   const highlights = [
@@ -132,11 +133,24 @@ function Home() {
             <div className="absolute -left-12 bottom-0 h-36 w-36 rounded-full bg-zinc-200/70 blur-3xl" />
 
             <div className="rounded-[1.6rem] border border-zinc-200 bg-zinc-50 p-4">
-              {/* Replace with a real GitHub/Octocat-style product image that matches the platform's brand story. */}
-              <img
+              <PixelatedCanvas
                 src="/github.png"
-                alt="GitHub-themed workspace illustration"
-                className="h-128 w-full rounded-[1.4rem] object-cover"
+                cellSize={3}
+                dotScale={0.9}
+                shape="square"
+                backgroundColor="#000000"
+                dropoutStrength={0.4}
+                interactive
+                distortionStrength={3}
+                distortionRadius={80}
+                distortionMode="swirl"
+                followSpeed={0.2}
+                jitterStrength={4}
+                jitterSpeed={4}
+                sampleAverage
+                tintColor="#FFFFFF"
+                tintStrength={0.2}
+                className="rounded-xl border border-neutral-800 shadow-lg"
               />
             </div>
           </div>
