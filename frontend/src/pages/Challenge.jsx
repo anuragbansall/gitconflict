@@ -140,6 +140,7 @@ function Challenge() {
           onClose={() => setShowPopup(false)}
         />
       )}
+
       {/* ================= LEFT PANEL ================= */}
       <section
         id="challenge-info"
@@ -308,6 +309,8 @@ function Challenge() {
       {/* ================= EDITOR ================= */}
       {startChallengeMutation.isPending ? (
         <Loading message="Setting up editor..." />
+      ) : startChallengeMutation.isError ? (
+        <Error error={startChallengeMutation.error} />
       ) : (
         <section
           id="challenge-editor"
@@ -338,6 +341,8 @@ function Challenge() {
       {/* ================= TERMINAL ================= */}
       {startChallengeMutation.isPending ? (
         <Loading message="Setting up terminal..." />
+      ) : startChallengeMutation.isError ? (
+        <Error error={startChallengeMutation.error} />
       ) : (
         <section
           id="terminal"
