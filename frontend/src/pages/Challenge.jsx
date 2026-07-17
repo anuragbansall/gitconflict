@@ -247,12 +247,7 @@ function Challenge() {
           </h2>
 
           <div className="space-y-4">
-            {[
-              "Identify leaked secrets inside a Git repository.",
-              "Understand why exposed credentials are a security risk.",
-              "Remove sensitive data from Git history.",
-              "Apply Git security best practices.",
-            ].map((item) => (
+            {challenge?.challenge?.whatYouWillLearn?.map((item) => (
               <div
                 key={item}
                 className="

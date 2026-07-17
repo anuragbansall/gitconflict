@@ -5,5 +5,10 @@
   "difficulty": "Easy",
   "xp": 100,
   "estimatedTime": 5,
-  "tags": ["git", "security"]
+  "tags": ["git", "security"],
+  "whatYouWillLearn": [
+    "How to identify sensitive information in a Git repository",
+    "Best practices for managing secrets in code",
+    "How to use Git tools to remove sensitive information from history"
+  ]
 }
