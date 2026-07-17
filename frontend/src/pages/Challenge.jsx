@@ -312,9 +312,9 @@ function Challenge() {
       ) : (
         <section
           id="challenge-editor"
-          className=" min-h-75 rounded-xl border border-zinc-300 bg-white p-5 lg:min-h-0 flex flex-col"
+          className=" min-h-75 rounded-xl border border-zinc-300 bg-white lg:min-h-0 flex flex-col"
         >
-          <div className="w-full flex border-b border-zinc-200 pb-3 mb-3">
+          <div className="w-full flex border-b border-zinc-200 py-3 px-5 sm:px-8 items-center gap-4">
             <Button
               className="ml-auto"
               onClick={handleVerifyChallenge}
