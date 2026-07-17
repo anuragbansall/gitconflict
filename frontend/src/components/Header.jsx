@@ -18,7 +18,7 @@ const navLinks = [
 
 function Header() {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -83,7 +83,7 @@ function Header() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b border-zinc-200">
           <Logo />
 
           <button
@@ -113,7 +113,7 @@ function Header() {
           ))}
         </nav>
 
-        <div className="border-t p-6 flex flex-col gap-3">
+        <div className="border-t border-zinc-200 p-6 flex flex-col gap-3">
           {isOpen ? (
             <>
               <Button
