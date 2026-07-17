@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 
 import Button from "./Button";
@@ -42,8 +42,17 @@ function Header() {
           ))}
         </nav>
 
-        {/* Desktop Buttons */}
         <div className="hidden md:flex items-center gap-4">
+          <Link
+            to="/challenges"
+            className="text-md font-medium bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition flex items-center gap-2"
+          >
+            Start practicing
+          </Link>
+        </div>
+
+        {/* Desktop Buttons */}
+        {/* <div className="hidden md:flex items-center gap-4">
           {isOpen ? (
             <>
               <Button isPrimary={false} onClick={() => navigate("/login")}>
@@ -58,7 +67,7 @@ function Header() {
               Logout
             </Button>
           )}
-        </div>
+        </div> */}
 
         {/* Mobile Menu Button */}
         <button
@@ -113,7 +122,7 @@ function Header() {
           ))}
         </nav>
 
-        <div className="border-t border-zinc-200 p-6 flex flex-col gap-3">
+        {/* <div className="border-t border-zinc-200 p-6 flex flex-col gap-3">
           {isOpen ? (
             <>
               <Button
@@ -147,7 +156,7 @@ function Header() {
               Logout
             </Button>
           )}
-        </div>
+        </div> */}
       </aside>
     </>
   );
