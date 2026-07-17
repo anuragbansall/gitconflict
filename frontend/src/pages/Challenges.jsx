@@ -2,6 +2,7 @@ import React from "react";
 import ChallengeCard from "../components/ChallengeCard";
 import useChallenges from "../hooks/useChallenges";
 import Loading from "../components/Loading";
+import Error from "../components/Error";
 
 function Challenges() {
   const { data: challenges = [], isLoading, isError, error } = useChallenges();
