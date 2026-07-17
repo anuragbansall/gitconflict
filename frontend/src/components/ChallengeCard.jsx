@@ -1,5 +1,5 @@
-import { FiClock, FiArrowRight, FiGitBranch } from "react-icons/fi";
-import { FaStar } from "react-icons/fa";
+import { FiClock, FiGitBranch } from "react-icons/fi";
+import { FaPlay, FaStar } from "react-icons/fa";
 import { Link } from "react-router";
 
 function ChallengeCard({ challenge }) {
@@ -64,10 +64,10 @@ function ChallengeCard({ challenge }) {
 
         <Link
           to={`/challenges/${challenge.id}`}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 py-3 font-semibold text-white transition hover:bg-blue-600"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-100 py-3 font-semibold text-zinc-700 transition hover:bg-blue-600 hover:text-white group-hover:translate-y-0.5"
         >
+          <FaPlay className="transition group-hover:-translate-x-1" />
           Start Challenge
-          <FiArrowRight className="transition group-hover:translate-x-1" />
         </Link>
       </div>
     </div>
