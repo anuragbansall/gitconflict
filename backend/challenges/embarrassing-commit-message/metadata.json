@@ -1,0 +1,15 @@
+{
+  "id": "embarrassing-commit-message",
+  "title": "The Embarrassing Commit Message",
+  "description": "A developer accidentally committed their work with the message 'asdf'. Rewrite the last commit message to something meaningful without creating a new commit.",
+  "difficulty": "BEGINNER",
+  "xp": 75,
+  "estimatedTime": 3,
+  "tags": ["git", "commit", "history"],
+  "whatYouWillLearn": [
+    "How to inspect commit history using git log",
+    "How to modify the latest commit message",
+    "How git commit --amend works",
+    "The difference between amending a commit and creating a new one"
+  ]
+}
