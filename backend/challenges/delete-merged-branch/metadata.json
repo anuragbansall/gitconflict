@@ -1,0 +1,14 @@
+{
+  "id": "delete-merged-branch",
+  "title": "Clean Up Merged Branches",
+  "description": "The feature has already been merged into main. Delete the merged feature branch to keep the repository clean.",
+  "difficulty": "MEDIUM",
+  "xp": 175,
+  "estimatedTime": 4,
+  "tags": ["git", "branch", "cleanup"],
+  "whatYouWillLearn": [
+    "How to safely delete merged branches",
+    "Why repositories should be cleaned up after releases",
+    "Difference between deleting a branch and deleting commits"
+  ]
+}
