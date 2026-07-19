@@ -1,0 +1,14 @@
+{
+  "id": "abort-the-merge",
+  "title": "Abort the Merge",
+  "description": "A merge resulted in conflicts, but you've been asked to stop the release. Abort the merge and restore the repository to its previous state.",
+  "difficulty": "MEDIUM",
+  "xp": 175,
+  "estimatedTime": 5,
+  "tags": ["git", "merge", "abort"],
+  "whatYouWillLearn": [
+    "How to cancel an in-progress merge",
+    "How git merge --abort works",
+    "How to safely recover from a failed merge"
+  ]
+}

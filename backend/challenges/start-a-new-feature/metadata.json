@@ -1,0 +1,15 @@
+{
+  "id": "start-a-new-feature",
+  "title": "Start a New Feature",
+  "description": "Your team follows a feature-branch workflow. Before implementing a new feature, create and switch to a new branch named feature/user-profile.",
+  "difficulty": "EASY",
+  "xp": 125,
+  "estimatedTime": 5,
+  "tags": ["git", "branch", "switch"],
+  "whatYouWillLearn": [
+    "Why feature branches are used",
+    "How to create a new branch",
+    "How to switch branches",
+    "How to check the current branch"
+  ]
+}

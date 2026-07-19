@@ -7,11 +7,8 @@ export function runCommand(command) {
         reject(error);
         return;
       }
-      if (stderr) {
-        reject(stderr);
-        return;
-      }
-      resolve(stdout);
+
+      resolve(stdout || stderr);
     });
   });
 }

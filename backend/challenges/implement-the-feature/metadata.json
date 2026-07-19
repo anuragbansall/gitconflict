@@ -1,0 +1,15 @@
+{
+  "id": "implement-the-feature",
+  "title": "Implement the Feature",
+  "description": "Finish the user profile feature by committing your changes on the feature branch.",
+  "difficulty": "EASY",
+  "xp": 125,
+  "estimatedTime": 5,
+  "tags": ["git", "branch", "commit"],
+  "whatYouWillLearn": [
+    "How to commit work on a feature branch",
+    "Why changes should be isolated from main",
+    "How to verify the current branch",
+    "The feature branch workflow"
+  ]
+}

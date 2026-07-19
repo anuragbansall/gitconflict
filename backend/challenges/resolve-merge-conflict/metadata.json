@@ -1,0 +1,15 @@
+{
+  "id": "resolve-merge-conflict",
+  "title": "Resolve the Merge Conflict",
+  "description": "Two developers modified the same function in different ways. Resolve the merge conflict by keeping both useful changes and complete the merge.",
+  "difficulty": "MEDIUM",
+  "xp": 200,
+  "estimatedTime": 10,
+  "tags": ["git", "merge", "conflicts"],
+  "whatYouWillLearn": [
+    "Why merge conflicts happen",
+    "How to read Git conflict markers",
+    "How to manually resolve a merge conflict",
+    "How to finish a merge after resolving conflicts"
+  ]
+}

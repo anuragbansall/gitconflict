@@ -4,4 +4,4 @@ echo ".env" >> .gitignore
 
 git add .
 
-git commit -m "Remove secrets"
+git commit -m "Remove tracked secrets"

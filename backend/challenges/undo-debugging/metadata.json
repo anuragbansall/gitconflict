@@ -1,0 +1,15 @@
+{
+  "id": "undo-debugging",
+  "title": "Undo the Debugging",
+  "description": "A developer added temporary debugging code but forgot to remove it. Restore the file back to its last committed version.",
+  "difficulty": "EASY",
+  "xp": 100,
+  "estimatedTime": 4,
+  "tags": ["git", "restore", "working-tree"],
+  "whatYouWillLearn": [
+    "How to discard local modifications",
+    "How git restore works",
+    "Difference between committed and modified files",
+    "How to safely undo accidental edits"
+  ]
+}

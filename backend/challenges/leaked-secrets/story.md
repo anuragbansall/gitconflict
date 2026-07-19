@@ -1,12 +1,13 @@
 # 🚨 Production Incident
 
-A developer accidentally committed the production
-`.env` file.
+A developer accidentally committed the production `.env` file.
 
-Your task:
+The application depends on this file, so **you must not delete it from disk**.
 
-- Remove `.env` from Git tracking.
-- Add `.env` to `.gitignore`.
-- Commit your changes.
+Your task is to:
 
-Do NOT delete the file from disk.
+- Stop Git from tracking `.env`
+- Prevent it from being committed again
+- Commit your changes
+
+The repository should still work after your fix.

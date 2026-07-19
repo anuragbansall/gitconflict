@@ -1,14 +1,15 @@
 {
   "id": "leaked-secrets",
   "title": "Leaked Secrets",
-  "description": "In this challenge, you will learn how to identify and mitigate leaked secrets in a Git repository. You will be provided with a sample repository that contains sensitive information, and your task is to find and remove these secrets.",
-  "difficulty": "Easy",
+  "description": "A developer accidentally committed the production .env file. Remove it from Git tracking while keeping it on disk and prevent it from being tracked again.",
+  "difficulty": "EASY",
   "xp": 100,
   "estimatedTime": 5,
-  "tags": ["git", "security"],
+  "tags": ["git", "security", ".gitignore"],
   "whatYouWillLearn": [
-    "How to identify sensitive information in a Git repository",
-    "Best practices for managing secrets in code",
-    "How to use Git tools to remove sensitive information from history"
+    "How to stop tracking an already committed file",
+    "How git rm --cached works",
+    "How .gitignore prevents future commits",
+    "Why sensitive files should never be committed"
   ]
 }

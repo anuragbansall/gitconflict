@@ -1,9 +1,21 @@
 Hint 1
 
-How can you stop tracking a file without deleting it?
+Deleting the file isn't the correct solution.
 
 ---
 
 Hint 2
 
-Look into `git rm --cached`.
+Git can stop tracking a file while leaving it on your computer.
+
+---
+
+Hint 3
+
+Look into:
+
+`git rm --cached`
+
+and
+
+`.gitignore`

@@ -1,9 +1,0 @@
-{
-  "id": "leaked-secrets - Copy",
-  "title": "Leaked Secrets - Copy",
-  "description": "In this challenge, you will learn how to identify and mitigate leaked secrets in a Git repository. You will be provided with a sample repository that contains sensitive information, and your task is to find and remove these secrets.",
-  "difficulty": "Easy",
-  "xp": 100,
-  "estimatedTime": 5,
-  "tags": ["git", "security"]
-}
