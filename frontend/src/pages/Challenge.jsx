@@ -19,6 +19,8 @@ import useVerifyChallenge from "../hooks/useverifyChallenge";
 import ChallengePopup from "../components/ChallengePopup";
 import { CiLock } from "react-icons/ci";
 import CodeEditor from "../components/CodeEditor";
+import Markdown from "@/components/Markdown";
+import DropDown from "@/components/DropDown";
 
 function Challenge() {
   const { id } = useParams();
@@ -119,9 +121,9 @@ function Challenge() {
   }, []);
 
   const difficultyStyles = {
-    Easy: "bg-green-100 text-green-700 border-green-200",
-    Medium: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    Hard: "bg-red-100 text-red-700 border-red-200",
+    EASY: "bg-green-100 text-green-700 border-green-200",
+    MEDIUM: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    HARD: "bg-red-100 text-red-700 border-red-200",
   };
 
   if (isLoading) {
@@ -195,9 +197,14 @@ function Challenge() {
           </div>
         </div>
 
+        {/* Story */}
+        <div className="border-b border-zinc-200 p-5 sm:p-8">
+          <Markdown data={challenge?.story} />
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 sm:p-8">
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-100/10 p-5">
             <div className="flex items-center gap-2 text-sm text-zinc-500">
               <FaStar className="text-yellow-500" />
               XP Reward
@@ -208,7 +215,7 @@ function Challenge() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-100/10 p-5">
             <div className="flex items-center gap-2 text-sm text-zinc-500">
               <FiClock />
               Estimated Time
@@ -309,6 +316,27 @@ function Challenge() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Hints & Solutions */}
+        <div className="m-5 mt-10 sm:m-8">
+          <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-zinc-800">
+            <CiLock />
+            Hints & Solutions
+          </h2>
+
+          <DropDown
+            options={[
+              {
+                title: "View Hints",
+                content: <Markdown data={challenge?.hints} />,
+              },
+              {
+                title: "View Solutions",
+                content: <Markdown data={challenge?.solution} />,
+              },
+            ]}
+          />
         </div>
       </section>
 

@@ -2,7 +2,7 @@
   "id": "embarrassing-commit-message",
   "title": "The Embarrassing Commit Message",
   "description": "A developer accidentally committed their work with the message 'asdf'. Rewrite the last commit message to something meaningful without creating a new commit.",
-  "difficulty": "BEGINNER",
+  "difficulty": "EASY",
   "xp": 75,
   "estimatedTime": 3,
   "tags": ["git", "commit", "history"],

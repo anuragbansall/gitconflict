@@ -4,9 +4,9 @@ import { Link } from "react-router";
 
 function ChallengeCard({ challenge }) {
   const difficultyColors = {
-    Easy: "bg-green-100 text-green-700",
-    Medium: "bg-yellow-100 text-yellow-700",
-    Hard: "bg-red-100 text-red-700",
+    EASY: "bg-green-100 text-green-700",
+    MEDIUM: "bg-yellow-100 text-yellow-700",
+    HARD: "bg-red-100 text-red-700",
   };
 
   return (

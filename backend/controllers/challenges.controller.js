@@ -51,6 +51,15 @@ export const getChallengeById = async (req, res) => {
     const metadata = await readFile(metadataPath, "utf-8");
     const challenge = JSON.parse(metadata);
 
+    const hintPath = join(challengesDir, challengeId, "hints.md");
+    const hints = await readFile(hintPath, "utf-8").catch(() => null);
+
+    const solutionPath = join(challengesDir, challengeId, "solution.md");
+    const solution = await readFile(solutionPath, "utf-8").catch(() => null);
+
+    const storyPath = join(challengesDir, challengeId, "story.md");
+    const story = await readFile(storyPath, "utf-8").catch(() => null);
+
     const repo = session
       ? await readRepoFiles({
           containerName: session.containerName,
@@ -60,6 +69,9 @@ export const getChallengeById = async (req, res) => {
 
     res.status(200).json({
       challenge,
+      hints,
+      solution,
+      story,
       repo,
     });
   } catch (error) {
