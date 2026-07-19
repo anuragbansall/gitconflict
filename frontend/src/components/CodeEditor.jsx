@@ -192,7 +192,9 @@ function CodeEditor({ repo = [] }) {
       name: normalizedFirstFile.split("/").pop(),
       content: firstFile.content || "",
     });
-    setExpandedFolders(new Set(collectAncestorPaths(normalizedFirstFile)));
+
+    // Keep everything collapsed
+    setExpandedFolders(new Set());
   }, [repo]);
 
   const toggleFolder = (folderPath) => {
