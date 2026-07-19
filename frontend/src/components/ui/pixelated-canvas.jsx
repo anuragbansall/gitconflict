@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import React from "react";
 
 export const PixelatedCanvas = ({
@@ -27,6 +27,7 @@ export const PixelatedCanvas = ({
   jitterSpeed = 4,
   fadeOnLeave = true,
   fadeSpeed = 0.1,
+  onError = () => {},
 }) => {
   const canvasRef = React.useRef(null);
   const samplesRef = React.useRef([]);
@@ -150,7 +151,7 @@ export const PixelatedCanvas = ({
 
       let tintRGB = null;
       if (tintColor && tintStrength > 0) {
-        const parse = c => {
+        const parse = (c) => {
           if (c.startsWith("#")) {
             const hex = c.slice(1);
             if (hex.length === 3) {
@@ -175,7 +176,10 @@ export const PixelatedCanvas = ({
       for (let y = 0; y < offscreen.height; y += cellSize) {
         const cy = Math.min(offscreen.height - 1, y + Math.floor(cellSize / 2));
         for (let x = 0; x < offscreen.width; x += cellSize) {
-          const cx = Math.min(offscreen.width - 1, x + Math.floor(cellSize / 2));
+          const cx = Math.min(
+            offscreen.width - 1,
+            x + Math.floor(cellSize / 2),
+          );
           let r = 0;
           let g = 0;
           let b = 0;
@@ -228,7 +232,10 @@ export const PixelatedCanvas = ({
             Math.abs(Ly2 - Ly1) +
             Math.abs(Lc - (Lx1 + Lx2 + Ly1 + Ly2) / 4);
           const gradientNorm = Math.max(0, Math.min(1, grad / 255));
-          const dropoutProb = Math.max(0, Math.min(1, (1 - gradientNorm) * dropoutStrength));
+          const dropoutProb = Math.max(
+            0,
+            Math.min(1, (1 - gradientNorm) * dropoutStrength),
+          );
           const drop = hash2D(cx, cy) < dropoutProb;
           const seed = hash2D(cx, cy);
 
@@ -263,14 +270,20 @@ export const PixelatedCanvas = ({
           if (shape === "circle") {
             const radius = dims.dot / 2;
             ctx.beginPath();
-            ctx.arc(s.x + cellSize / 2, s.y + cellSize / 2, radius, 0, Math.PI * 2);
+            ctx.arc(
+              s.x + cellSize / 2,
+              s.y + cellSize / 2,
+              radius,
+              0,
+              Math.PI * 2,
+            );
             ctx.fill();
           } else {
             ctx.fillRect(
               s.x + cellSize / 2 - dims.dot / 2,
               s.y + cellSize / 2 - dims.dot / 2,
               dims.dot,
-              dims.dot
+              dims.dot,
             );
           }
         }
@@ -391,7 +404,12 @@ export const PixelatedCanvas = ({
             ctx.arc(drawX, drawY, radius, 0, Math.PI * 2);
             ctx.fill();
           } else {
-            ctx.fillRect(drawX - dims.dot / 2, drawY - dims.dot / 2, dims.dot, dims.dot);
+            ctx.fillRect(
+              drawX - dims.dot / 2,
+              drawY - dims.dot / 2,
+              dims.dot,
+              dims.dot,
+            );
           }
         }
         ctx.globalAlpha = 1;
@@ -408,11 +426,12 @@ export const PixelatedCanvas = ({
         canvasEl.removeEventListener("pointerleave", onPointerLeave);
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
       };
-      (img)._cleanup = cleanup;
+      img._cleanup = cleanup;
     };
 
     img.onerror = () => {
-      console.error("Failed to load image for PixelatedCanvas:", src);
+      // Fallback to /github.png if the AVIF fails to load
+      img.src = "/github.png";
     };
 
     if (responsive) {
@@ -425,13 +444,13 @@ export const PixelatedCanvas = ({
       return () => {
         isCancelled = true;
         window.removeEventListener("resize", onResize);
-        if ((img)._cleanup) (img)._cleanup();
+        if (img._cleanup) img._cleanup();
       };
     }
 
     return () => {
       isCancelled = true;
-      if ((img)._cleanup) (img)._cleanup();
+      if (img._cleanup) img._cleanup();
     };
   }, [
     src,
@@ -465,6 +484,7 @@ export const PixelatedCanvas = ({
       ref={canvasRef}
       className={className}
       aria-label="Pixelated rendering of source image"
-      role="img" />
+      role="img"
+    />
   );
 };

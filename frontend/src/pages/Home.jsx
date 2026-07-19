@@ -134,7 +134,7 @@ function Home() {
 
             <div className="rounded-[1.6rem] border border-zinc-200 bg-zinc-50 p-4">
               <PixelatedCanvas
-                src="/github.png"
+                src="/github.avif"
                 cellSize={3}
                 dotScale={0.9}
                 shape="square"
