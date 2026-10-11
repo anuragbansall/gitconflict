@@ -69,9 +69,9 @@ function CodeTerminal({ sessionId, challengeId }) {
               prompt();
             },
             onError: (error) => {
-              terminal.writeln(
-                `Error executing command: ${error.message || "Unknown error"}`,
-              );
+              const msg =
+                error.response?.data?.error || error.message || "Unknown error";
+              terminal.writeln(msg);
               prompt();
             },
           },
