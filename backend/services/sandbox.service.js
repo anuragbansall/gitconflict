@@ -11,7 +11,7 @@ export const createSandbox = async () => {
   // Provide a git user config so commits don't fail with "user.email not set"
   await writeFile(
     join(sandboxDir, ".gitconfig"),
-    "[user]\n\tname = Git Challenge User\n\temail = user@gitchallenge.dev\n",
+    "[user]\n\tname = Git Challenge User\n\temail = user@gitchallenge.dev\n[safe]\n\tdirectory = *\n",
   );
   return sandboxDir;
 };
