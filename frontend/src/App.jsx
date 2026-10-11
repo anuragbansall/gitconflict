@@ -5,6 +5,7 @@ import Challenges from "./pages/Challenges";
 import PageLayout from "./components/PageLayout";
 import BlankPageLayout from "./components/BlankPageLayout";
 import Challenge from "./pages/Challenge";
+import UserProfile from "./pages/UserProfile";
 import { Bounce, ToastContainer } from "react-toastify";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         <Route element={<PageLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/challenges" element={<Challenges />} />
+          <Route path="/u/:username" element={<UserProfile />} />
         </Route>
 
         <Route element={<BlankPageLayout />}>

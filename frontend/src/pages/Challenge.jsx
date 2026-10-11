@@ -21,14 +21,19 @@ import { CiLock } from "react-icons/ci";
 import CodeEditor from "../components/CodeEditor";
 import Markdown from "@/components/Markdown";
 import DropDown from "@/components/DropDown";
+import { useAuth } from "../context/AuthContext";
+import AuthModal from "../components/AuthModal";
+import { authClient } from "../lib/auth";
 
 function Challenge() {
   const { id } = useParams();
+  const { user, loading: authLoading } = useAuth();
 
   const sessionIdRef = useRef(null);
   const stopRequestedRef = useRef(false);
 
   const [showPopup, setShowPopup] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const {
     data: challenge = {},
@@ -70,7 +75,7 @@ function Challenge() {
     stopChallengeMutation.mutate(sessionId);
   };
 
-  const sendStopRequestOnExit = () => {
+  const sendStopRequestOnExit = async () => {
     const sessionId = sessionIdRef.current;
 
     if (!sessionId || stopRequestedRef.current) return;
@@ -78,25 +83,32 @@ function Challenge() {
     stopRequestedRef.current = true;
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    if (!backendUrl) return;
 
-    if (backendUrl) {
-      fetch(`${backendUrl}/challenges/stop/${sessionId}`, {
-        method: "DELETE",
-        credentials: "include",
-        keepalive: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).catch(() => {});
-    }
+    let authHeader = {};
+    try {
+      const result = await authClient.getSession();
+      const token = result.data?.session?.token;
+      if (token) authHeader = { Authorization: `Bearer ${token}` };
+    } catch { /* no token */ }
+
+    fetch(`${backendUrl}/challenges/stop/${sessionId}`, {
+      method: "DELETE",
+      keepalive: true,
+      headers: { "Content-Type": "application/json", ...authHeader },
+    }).catch(() => {});
   };
 
   // Start the challenge when the component mounts and the challenge data is available
   useEffect(() => {
-    if (challenge?.challenge?.id) {
-      startChallengeMutation.mutate(challenge.challenge.id);
+    if (!challenge?.challenge?.id) return;
+    if (authLoading) return;
+    if (!user) {
+      setShowAuthModal(true);
+      return;
     }
-  }, [challenge?.challenge?.id]);
+    startChallengeMutation.mutate(challenge.challenge.id);
+  }, [challenge?.challenge?.id, user?.id, authLoading]);
 
   // Stop the challenge when the component unmounts
   useEffect(() => {
@@ -108,7 +120,7 @@ function Challenge() {
   // Handle page unload to stop the challenge
   useEffect(() => {
     const handleExit = () => {
-      sendStopRequestOnExit();
+      void sendStopRequestOnExit();
     };
 
     window.addEventListener("pagehide", handleExit);
@@ -142,6 +154,10 @@ function Challenge() {
           errors={verifyChallengeMutation?.data?.errors || []}
           onClose={() => setShowPopup(false)}
         />
+      )}
+
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
       )}
 
       {/* ================= LEFT PANEL ================= */}
@@ -340,53 +356,72 @@ function Challenge() {
         </div>
       </section>
 
-      {/* ================= EDITOR ================= */}
-      {startChallengeMutation.isPending ? (
-        <Loading message="Setting up editor..." />
-      ) : startChallengeMutation.isError ? (
-        <Error error={startChallengeMutation.error} />
-      ) : (
+      {/* ================= EDITOR & TERMINAL ================= */}
+      {!user && !authLoading ? (
         <section
-          id="challenge-editor"
-          className=" min-h-75 rounded-xl border border-zinc-300 bg-white lg:min-h-0 flex flex-col"
+          id="challenge-auth"
+          className="lg:col-start-2 lg:row-span-2 flex items-center justify-center rounded-xl border border-zinc-300 bg-white shadow p-8"
         >
-          <div className="w-full flex border-b border-zinc-200 py-3 px-5 sm:px-8 items-center gap-4">
-            <Button
-              className="ml-auto"
-              onClick={handleVerifyChallenge}
-              disabled={verifyChallengeMutation.isPending}
-            >
-              <FaPlay /> Submit Solution
-            </Button>
+          <div className="text-center max-w-sm">
+            <CiLock className="mx-auto mb-4 text-zinc-400" size={48} />
+            <h2 className="text-xl font-semibold text-zinc-800 mb-2">Sign in to start</h2>
+            <p className="text-sm text-zinc-500 mb-6">
+              You need to be signed in to start challenges and track your progress.
+            </p>
+            <Button onClick={() => setShowAuthModal(true)}>Sign in</Button>
           </div>
-
-          <CodeEditor repo={challenge?.repo} />
         </section>
-      )}
-
-      {/* ================= TERMINAL ================= */}
-      {startChallengeMutation.isPending ? (
-        <Loading message="Setting up terminal..." />
-      ) : startChallengeMutation.isError ? (
-        <Error error={startChallengeMutation.error} />
       ) : (
-        <section
-          id="terminal"
-          className="
-          overflow-hidden
-          rounded-xl
-          border
-          border-zinc-300
-          shadow
+        <>
+          {/* ================= EDITOR ================= */}
+          {startChallengeMutation.isPending ? (
+            <Loading message="Setting up editor..." />
+          ) : startChallengeMutation.isError ? (
+            <Error error={startChallengeMutation.error} />
+          ) : (
+            <section
+              id="challenge-editor"
+              className=" min-h-75 rounded-xl border border-zinc-300 bg-white lg:min-h-0 flex flex-col"
+            >
+              <div className="w-full flex border-b border-zinc-200 py-3 px-5 sm:px-8 items-center gap-4">
+                <Button
+                  className="ml-auto"
+                  onClick={handleVerifyChallenge}
+                  disabled={verifyChallengeMutation.isPending}
+                >
+                  <FaPlay /> Submit Solution
+                </Button>
+              </div>
 
-          lg:min-h-0
-        "
-        >
-          <CodeTerminal
-            sessionId={startChallengeMutation.data?.sessionId}
-            challengeId={challenge?.challenge?.id}
-          />
-        </section>
+              <CodeEditor repo={challenge?.repo} />
+            </section>
+          )}
+
+          {/* ================= TERMINAL ================= */}
+          {startChallengeMutation.isPending ? (
+            <Loading message="Setting up terminal..." />
+          ) : startChallengeMutation.isError ? (
+            <Error error={startChallengeMutation.error} />
+          ) : (
+            <section
+              id="terminal"
+              className="
+              overflow-hidden
+              rounded-xl
+              border
+              border-zinc-300
+              shadow
+
+              lg:min-h-0
+            "
+            >
+              <CodeTerminal
+                sessionId={startChallengeMutation.data?.sessionId}
+                challengeId={challenge?.challenge?.id}
+              />
+            </section>
+          )}
+        </>
       )}
     </main>
   );

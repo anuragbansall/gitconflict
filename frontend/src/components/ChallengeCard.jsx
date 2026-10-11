@@ -1,8 +1,8 @@
 import { FiClock, FiGitBranch } from "react-icons/fi";
-import { FaPlay, FaStar } from "react-icons/fa";
+import { FaPlay, FaStar, FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router";
 
-function ChallengeCard({ challenge }) {
+function ChallengeCard({ challenge, completed = false }) {
   const difficultyColors = {
     EASY: "bg-green-100 text-green-700",
     MEDIUM: "bg-yellow-100 text-yellow-700",
@@ -10,7 +10,11 @@ function ChallengeCard({ challenge }) {
   };
 
   return (
-    <div className="group flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+    <div className={`group flex flex-col justify-between rounded-2xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+      completed
+        ? "border-green-300 bg-green-50 hover:border-green-400"
+        : "border-zinc-200 bg-white hover:border-blue-200"
+    }`}>
       {/* Top */}
       <div>
         <div className="mb-4 flex items-center justify-between">
@@ -22,9 +26,16 @@ function ChallengeCard({ challenge }) {
             {challenge.difficulty}
           </span>
 
-          <div className="flex items-center gap-1 text-amber-500 font-semibold">
-            <FaStar size={14} />
-            {challenge.xp} XP
+          <div className="flex items-center gap-2">
+            {completed && (
+              <span className="flex items-center gap-1 text-green-600 text-xs font-semibold bg-green-100 px-2 py-1 rounded-full">
+                <FaCheckCircle size={11} /> Done
+              </span>
+            )}
+            <div className="flex items-center gap-1 text-amber-500 font-semibold">
+              <FaStar size={14} />
+              {challenge.xp} XP
+            </div>
           </div>
         </div>
 

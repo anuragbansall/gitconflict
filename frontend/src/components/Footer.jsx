@@ -2,7 +2,6 @@ import React from "react";
 import InputButton from "./InputButton";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { successToast } from "../utils/toast.js";
 
 function Footer() {
   const socialLinks = [
@@ -44,9 +43,7 @@ function Footer() {
             type="email"
             onSubmit={(e) => {
               e.preventDefault();
-
               e.target.reset();
-              successToast("Subscribed successfully!");
             }}
           />
         </div>

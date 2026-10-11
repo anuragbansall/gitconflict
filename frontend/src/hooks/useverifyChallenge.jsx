@@ -1,13 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { verifyChallenge } from "../api/challenges";
-import { errorToast, successToast } from "../utils/toast";
+import { errorToast } from "../utils/toast";
 
 const useVerifyChallenge = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: verifyChallenge,
     onSuccess: (data) => {
       console.log("Challenge verified successfully:", data);
-      successToast("Challenge verified successfully!");
+      if (data.success) {
+        void queryClient.invalidateQueries({ queryKey: ["progress"] });
+      }
     },
     onError: (error) => {
       console.error("Error verifying challenge:", error);
