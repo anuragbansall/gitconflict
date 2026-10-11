@@ -147,10 +147,6 @@ export const executeCommand = async (req, res) => {
       return res.status(400).json({ error: "Command is required" });
     }
 
-    if (!/^git(\s|$)/.test(command.trim())) {
-      return res.status(400).json({ error: "Only git commands are allowed." });
-    }
-
     const session = await getSession(sessionId);
     if (!session) {
       return res.status(404).json({ error: "Session not found" });
