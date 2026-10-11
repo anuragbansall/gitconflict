@@ -1,16 +1,12 @@
-# Pulling Ubuntu 24.04 base image
-FROM ubuntu:24.04
+FROM node:20-alpine
 
-# Install git 
-RUN apt-get update && \
-    apt-get install -y git
+RUN apk add --no-cache git
 
-# Set up git user configuration
-RUN git config --global user.name "Git Challenge User"
-RUN git config --global user.email "user@gitchallenge.dev"
+WORKDIR /app
 
-# Set working directory to /workspace
-WORKDIR /workspace
+COPY package*.json ./
+RUN npm install --production
 
-# Run the container in detached mode and keep it running
-CMD ["tail", "-f", "/dev/null"]
+COPY . .
+
+CMD ["node", "server.js"]
