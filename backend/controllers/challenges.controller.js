@@ -13,11 +13,10 @@ import {
   removeSession,
 } from "../services/session.service.js";
 import {
-  copyFileToContainer,
-  createContainer,
-  executeCommandInContainer,
-  removeContainer,
-} from "../services/docker.service.js";
+  createSandbox,
+  executeCommandInSandbox,
+  removeSandbox,
+} from "../services/sandbox.service.js";
 import { readRepoFiles } from "../utils/readRepoFiles.js";
 import { sql } from "../src/db.js";
 
@@ -89,12 +88,15 @@ export const getChallengeById = async (req, res) => {
     const { hints, solution, story, ...challenge } = rows[0];
 
     let repo;
-    if (session) {
-      repo = await readRepoFiles({
-        containerName: session.containerName,
-        containerRepoPath: "/workspace/repo",
-      });
-    } else {
+    if (session?.sandboxDir) {
+      try {
+        repo = await readRepoFiles(join(session.sandboxDir, "repo"));
+      } catch {
+        // Sandbox expired (server restarted) — fall through to S3
+      }
+    }
+
+    if (!repo) {
       const tmpDir = await mkdtemp(join(tmpdir(), "gitchallenge-"));
       try {
         await downloadAndExtractRepo(challengeId, tmpDir);
@@ -115,25 +117,12 @@ export const startChallenge = async (req, res) => {
   try {
     const { challengeId } = req.params;
     const sessionId = randomUUID();
-    const containerName = `git-sandbox-${sessionId}`;
 
-    const containerId = await createContainer(containerName);
-
-    const tmpDir = await mkdtemp(join(tmpdir(), "gitchallenge-"));
-    try {
-      await downloadAndExtractRepo(challengeId, tmpDir);
-      await copyFileToContainer(containerName, join(tmpDir, "repo"), "/workspace");
-    } finally {
-      await rm(tmpDir, { recursive: true, force: true });
-    }
-
-    await executeCommandInContainer(
-      containerName,
-      "git config --global --add safe.directory /workspace/repo",
-    );
+    const sandboxDir = await createSandbox();
+    await downloadAndExtractRepo(challengeId, sandboxDir);
 
     await addSession(sessionId, {
-      containerName,
+      sandboxDir,
       challengeId,
       userId: req.userId ?? null,
     });
@@ -141,8 +130,6 @@ export const startChallenge = async (req, res) => {
     res.status(200).json({
       message: "Challenge started successfully",
       sessionId,
-      containerId,
-      containerName,
       challengeId,
     });
   } catch (error) {
@@ -160,13 +147,16 @@ export const executeCommand = async (req, res) => {
       return res.status(400).json({ error: "Command is required" });
     }
 
-    const session = await getSession(sessionId);
+    if (!/^git(\s|$)/.test(command.trim())) {
+      return res.status(400).json({ error: "Only git commands are allowed." });
+    }
 
+    const session = await getSession(sessionId);
     if (!session) {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    const output = await executeCommandInContainer(session.containerName, command);
+    const output = await executeCommandInSandbox(session.sandboxDir, command);
 
     res.status(200).json({ message: "Command executed successfully", output });
   } catch (error) {
@@ -180,12 +170,11 @@ export const stopChallenge = async (req, res) => {
     const { sessionId } = req.params;
 
     const session = await getSession(sessionId);
-
     if (!session) {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    await removeContainer(session.containerName);
+    await removeSandbox(session.sandboxDir);
     await removeSession(sessionId);
 
     res.status(200).json({ message: "Challenge stopped successfully" });
@@ -200,12 +189,11 @@ export const verifyChallenge = async (req, res) => {
     const { sessionId } = req.params;
 
     const session = await getSession(sessionId);
-
     if (!session) {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    const { containerName, challengeId, userId } = session;
+    const { sandboxDir, challengeId, userId } = session;
 
     const rows = await sql`SELECT verify_js FROM challenges WHERE id = ${challengeId}`;
     if (!rows[0]?.verify_js) {
@@ -223,7 +211,7 @@ export const verifyChallenge = async (req, res) => {
     }
 
     const result = await verifier((command) =>
-      executeCommandInContainer(containerName, command),
+      executeCommandInSandbox(sandboxDir, command),
     );
 
     if (result.success && userId) {

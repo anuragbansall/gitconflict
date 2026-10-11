@@ -1,36 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { HiOutlineX } from "react-icons/hi";
 
 function AuthModal({ onClose }) {
-  const { signIn, signUp, signInWithGoogle } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const result = isSignUp
-      ? await signUp(email, password)
-      : await signIn(email, password);
-
-    setLoading(false);
-
-    if (result.error) {
-      setError(result.error);
-    } else {
-      onClose();
-    }
-  };
+  const { signInWithGoogle } = useAuth();
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-800 text-2xl"
@@ -38,65 +15,15 @@ function AuthModal({ onClose }) {
           <HiOutlineX />
         </button>
 
-        <h2 className="text-2xl font-bold text-zinc-800 mb-6">
-          {isSignUp ? "Create an account" : "Welcome back"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-60"
-          >
-            {loading ? "Please wait…" : isSignUp ? "Sign Up" : "Sign In"}
-          </button>
-        </form>
-
-        <div className="mt-4 flex items-center gap-3">
-          <hr className="flex-1 border-zinc-200" />
-          <span className="text-xs text-zinc-400">or</span>
-          <hr className="flex-1 border-zinc-200" />
-        </div>
+        <h2 className="text-2xl font-bold text-zinc-800 mb-2">Sign in</h2>
+        <p className="text-sm text-zinc-500 mb-6">
+          Continue with your Google account to track your progress.
+        </p>
 
         <button
           type="button"
           onClick={() => signInWithGoogle("/")}
-          className="mt-4 w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-lg py-2 px-4 text-zinc-700 font-medium hover:bg-zinc-50 transition"
+          className="w-full flex items-center justify-center gap-3 border border-zinc-300 rounded-lg py-2.5 px-4 text-zinc-700 font-medium hover:bg-zinc-50 transition"
         >
           <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
             <path
@@ -118,19 +45,6 @@ function AuthModal({ onClose }) {
           </svg>
           Continue with Google
         </button>
-
-        <p className="mt-4 text-sm text-center text-zinc-500">
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-          <button
-            onClick={() => {
-              setIsSignUp((v) => !v);
-              setError("");
-            }}
-            className="text-blue-600 font-medium hover:underline"
-          >
-            {isSignUp ? "Sign in" : "Sign up"}
-          </button>
-        </p>
       </div>
     </div>
   );

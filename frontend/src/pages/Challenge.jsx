@@ -362,7 +362,7 @@ function Challenge() {
           id="challenge-auth"
           className="lg:col-start-2 lg:row-span-2 flex items-center justify-center rounded-xl border border-zinc-300 bg-white shadow p-8"
         >
-          <div className="text-center max-w-sm">
+          <div className="flex flex-col items-center text-center max-w-sm">
             <CiLock className="mx-auto mb-4 text-zinc-400" size={48} />
             <h2 className="text-xl font-semibold text-zinc-800 mb-2">Sign in to start</h2>
             <p className="text-sm text-zinc-500 mb-6">
