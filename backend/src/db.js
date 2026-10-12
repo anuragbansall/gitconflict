@@ -7,7 +7,11 @@ const getSql = () => {
     if (!process.env.DATABASE_URL) {
       throw new Error("DATABASE_URL is not defined. Check your .env.local or deployment env.");
     }
-    _sql = neon(process.env.DATABASE_URL);
+    // Strip Postgres wire-protocol params that break the Neon HTTP driver
+    const url = new URL(process.env.DATABASE_URL);
+    url.searchParams.delete("sslmode");
+    url.searchParams.delete("channel_binding");
+    _sql = neon(url.toString());
   }
   return _sql;
 };
@@ -18,13 +22,13 @@ const isTransient = (err) =>
   err?.message?.includes("fetch failed") ||
   err?.message?.includes("ECONNREFUSED");
 
-async function withRetry(fn, retries = 3, delay = 500) {
+async function withRetry(fn, retries = 4, delay = 3000) {
   try {
     return await fn();
   } catch (err) {
     if (retries === 0 || !isTransient(err)) throw err;
     await new Promise((res) => setTimeout(res, delay));
-    return withRetry(fn, retries - 1, delay * 2);
+    return withRetry(fn, retries - 1, delay * 1.5);
   }
 }
 

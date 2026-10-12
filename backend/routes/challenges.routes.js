@@ -4,6 +4,7 @@ import {
   getAllChallenges,
   getChallengeById,
   getUserProgress,
+  saveFileInSandbox,
   startChallenge,
   stopChallenge,
   verifyChallenge,
@@ -26,6 +27,9 @@ challengesRouter.post("/start/:challengeId", extractUser, requireAuth, startChal
 
 // Execute command in the challenge container
 challengesRouter.post("/execute/:sessionId", extractUser, requireAuth, executeCommand);
+
+// Save a file in the sandbox
+challengesRouter.put("/file/:sessionId", extractUser, requireAuth, saveFileInSandbox);
 
 // Stop challenge (Remove the container)
 challengesRouter.delete("/stop/:sessionId", extractUser, requireAuth, stopChallenge);

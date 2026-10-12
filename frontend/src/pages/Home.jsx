@@ -76,7 +76,12 @@ function Home() {
       <div className="absolute right-[-6rem] top-40 -z-10 h-72 w-72 rounded-full bg-slate-200/70 blur-3xl" />
 
       <div className="mx-auto flex w-full max-w-300 flex-col gap-20 px-4 py-4 md:px-6 lg:py-8">
-        <section className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        <section className="relative grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          <img
+            src="/meme.png"
+            alt="Git meme"
+            className="absolute -left-60 -top-8 hidden w-44 -rotate-6 rounded-2xl z-10 opacity-40 pointer-events-none select-none lg:block"
+          />
           <div className="max-w-2xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm backdrop-blur">
               <FaStar className="text-amber-500" />

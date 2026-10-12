@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
@@ -235,5 +235,34 @@ export const getUserProgress = async (req, res) => {
   } catch (error) {
     console.error("Error fetching user progress:", error);
     res.status(500).json({ error: "Failed to fetch progress" });
+  }
+};
+
+export const saveFileInSandbox = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { path: filePath, content } = req.body;
+
+    if (!filePath || content === undefined) {
+      return res.status(400).json({ error: "Path and content are required" });
+    }
+
+    const session = await getSession(sessionId);
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    const repoDir = join(session.sandboxDir, "repo");
+    const fullPath = resolve(repoDir, filePath);
+
+    if (!fullPath.startsWith(repoDir + "/") && fullPath !== repoDir) {
+      return res.status(400).json({ error: "Invalid file path" });
+    }
+
+    await writeFile(fullPath, content, "utf-8");
+    res.json({ message: "File saved successfully" });
+  } catch (error) {
+    console.error("Error saving file:", error);
+    res.status(500).json({ error: "Failed to save file" });
   }
 };

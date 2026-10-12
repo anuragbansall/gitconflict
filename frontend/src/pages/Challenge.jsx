@@ -393,7 +393,7 @@ function Challenge() {
                 </Button>
               </div>
 
-              <CodeEditor repo={challenge?.repo} />
+              <CodeEditor repo={challenge?.repo} sessionId={startChallengeMutation.data?.sessionId} />
             </section>
           )}
 
